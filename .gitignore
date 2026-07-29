@@ -1,0 +1,59 @@
+# ==========================================
+# Environments & Virtual Envs
+# ==========================================
+main_py_env/
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+bin/
+lib/
+include/
+
+# ==========================================
+# Data Files & Local Storage
+# ==========================================
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.json
+*.sqlite
+*.sqlite3
+*.db
+local_data/
+data/
+datasets/
+raw_data/
+processed_data/
+*.log
+
+# ==========================================
+# Python Caches & Bytecode
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ==========================================
+# IDEs & Environment Variables
+# ==========================================
+.vscode/
+.idea/
+.env
+.env.local
+
+# ==========================================
+# OS Junk
+# ==========================================
+.DS_Store
+Thumbs.db
