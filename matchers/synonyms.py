@@ -1,0 +1,18 @@
+FIELD_SYNONYMS = {
+    "product_name": ["article", "product", "item", "produit", "designation", "libelle", "art", "nom produit"],
+    "quantity": ["qte", "qty", "quantite", "count", "nombre", "qte_vendue", "units", "unites"],
+    "revenue": ["montant", "montant ht", "montant total", "total", "amount", "prix total",
+                "chiffre affaire", "ca", "mt_ht", "total revenue", "sales amount"],
+    "sale_date": ["date", "date vente", "date de vente", "order date", "transaction date", "dt", "date achat"],
+    "unit_price": ["prix unitaire", "pu", "price per unit", "unit cost", "prix", "cout unitaire"],
+    "customer_name": ["client", "nom client", "customer", "buyer", "acheteur", "nom du client"],
+    "customer_id": ["id client", "customer id", "ref client", "client id", "numero client", "cust_id"],
+    "category": ["categorie", "cat", "product category", "type produit", "famille"],
+    "discount": ["remise", "reduction", "discount pct", "rabais", "promo"],
+    "tax_amount": ["tva", "taxe", "vat", "tax", "montant tva"],
+    "payment_method": ["mode paiement", "payment type", "moyen de paiement", "paiement"],
+    "store_location": ["magasin", "store", "location", "point de vente", "boutique", "succursale"],
+    "salesperson": ["vendeur", "sales rep", "commercial", "employe", "agent"],
+    "invoice_number": ["facture", "invoice", "numero facture", "num facture", "ref facture"],
+    "currency": ["devise", "monnaie", "curr"],
+}
