@@ -1,0 +1,21 @@
+services:
+  bayan_db:
+    image: postgres:15
+    container_name: bayan_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bayan_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bayan_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-bayan}
+    ports:
+      - "5432:5432"
+    volumes:
+      - bayan_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bayan_user} -d ${POSTGRES_DB:-bayan}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  bayan_db_data:
