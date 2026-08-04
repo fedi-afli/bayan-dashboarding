@@ -158,4 +158,4 @@ def profile_file(options: ProfileOptions):
             get_column_info(df[column], options.example_values)
         )
 
-    return df,profile
+    return profile,df

@@ -10,6 +10,7 @@ from mapper.mapper import BayanMapper
 from matchers.confirmation import review_uncertain_mappings
 from mapper.sql_schema_generator import load_schema, generate_create_table_sql, save_sql_file
 from db import execute_sql, get_connection
+from rules import resolve_charts_from_mapping
 
 
 def apply_mapping(dataset: pd.DataFrame, mapping: dict) -> pd.DataFrame:
@@ -66,7 +67,7 @@ def load_dataframe_to_postgres(df: pd.DataFrame, table_name: str) -> None:
 
 def run_pipeline(file_path: str):
     options = ProfileOptions(file=file_path, example_values=3)
-    dataset, profile = profile_file(options)
+    profile, dataset = profile_file(options)
 
     mapper = BayanMapper()
     result = mapper.map(profile)  # {"mapping", "status", "unresolved_columns", "errors", "notes"}
@@ -125,3 +126,15 @@ if __name__ == "__main__":
     cleaned_dataset = apply_mapping(dataset, result["mapping"])
 
     load_dataframe_to_postgres(cleaned_dataset, table_name="sales")
+
+    # Resolve which charts apply given the fields that actually made it into
+    # the table (i.e. the mapping's target field names, not the raw columns)
+    charts = resolve_charts_from_mapping(result["mapping"])
+
+    charts_path = "output/charts.json"
+    with open(charts_path, "w", encoding="utf-8") as f:
+        json.dump(charts, f, indent=4, ensure_ascii=False)
+
+    print(f"[✓] {len(charts)} chart(s) résolu(s) et sauvegardé(s) dans {charts_path}")
+    for c in charts:
+        print(f"    - {c['title']} ({c['chart_type']})")
