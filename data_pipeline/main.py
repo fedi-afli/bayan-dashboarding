@@ -65,9 +65,26 @@ def load_dataframe_to_postgres(df: pd.DataFrame, table_name: str) -> None:
         conn.close()
 
 
+def _split_profile_result(result) -> tuple:
+    """
+    profile_file() is supposed to return (dataset, profile), but this
+    codebase has had that order flip more than once — normalize by type
+    instead of trusting positional order.
+    """
+    a, b = result
+    if isinstance(a, pd.DataFrame) and isinstance(b, dict):
+        return a, b
+    if isinstance(b, pd.DataFrame) and isinstance(a, dict):
+        return b, a
+    raise TypeError(
+        "profile_file() must return one pandas DataFrame and one dict "
+        f"(got {type(a)} and {type(b)})"
+    )
+
+
 def run_pipeline(file_path: str):
     options = ProfileOptions(file=file_path, example_values=3)
-    profile, dataset = profile_file(options)
+    dataset, profile = _split_profile_result(profile_file(options))
 
     mapper = BayanMapper()
     result = mapper.map(profile)  # {"mapping", "status", "unresolved_columns", "errors", "notes"}

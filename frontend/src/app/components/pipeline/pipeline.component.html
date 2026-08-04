@@ -1,0 +1,41 @@
+<div class="flex max-w-3xl flex-col gap-6">
+  <ol class="flex gap-6 text-sm text-slate-400">
+    <li
+      [ngClass]="{
+        'font-bold text-indigo-600': stage === 'upload',
+        'text-emerald-600': stage !== 'upload'
+      }"
+    >
+      1. Upload
+    </li>
+    <li
+      [ngClass]="{
+        'font-bold text-indigo-600': stage === 'review',
+        'text-emerald-600': stage === 'charts'
+      }"
+    >
+      2. Review mapping
+    </li>
+    <li [ngClass]="{ 'font-bold text-indigo-600': stage === 'charts' }">3. Charts</li>
+  </ol>
+
+  <app-fileupload *ngIf="stage === 'upload'" (uploaded)="onUploaded($event)"></app-fileupload>
+
+  <app-mappingview
+    *ngIf="stage === 'review' && jobId && mappingResult"
+    [jobId]="jobId"
+    [mappingResult]="mappingResult"
+    (confirmed)="onConfirmed($event)"
+  ></app-mappingview>
+
+  <ng-container *ngIf="stage === 'charts' && jobId">
+    <app-pipelinedashboard [jobId]="jobId" [charts]="charts"></app-pipelinedashboard>
+    <button
+      type="button"
+      class="self-start rounded-lg border border-slate-300 bg-white px-4 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+      (click)="startOver()"
+    >
+      Load another file
+    </button>
+  </ng-container>
+</div>

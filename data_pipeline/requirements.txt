@@ -13,12 +13,14 @@ cuda-pathfinder==1.6.0
 cuda-toolkit==13.0.3.0
 diskcache==5.6.3
 et_xmlfile==2.0.0
+fastapi==0.141.1
 filelock==3.32.0
 fsspec==2026.7.0
 genson==1.4.0
 h11==0.16.0
 hf-xet==1.5.2
 httpcore==1.0.9
+httptools==0.8.0
 httpx==0.28.1
 huggingface_hub==1.25.1
 idna==3.18
@@ -62,6 +64,7 @@ pydantic_core==2.46.4
 Pygments==2.20.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
+python-multipart==0.0.32
 PyYAML==6.0.3
 RapidFuzz==3.14.5
 referencing==0.37.0
@@ -76,6 +79,7 @@ sentencepiece==0.2.2
 setuptools==83.0.0
 shellingham==1.5.4
 six==1.17.0
+starlette==1.3.1
 sympy==1.14.0
 threadpoolctl==3.6.0
 tokenizers==0.22.2
@@ -86,3 +90,7 @@ triton==3.7.1
 typer==0.27.0
 typing-inspection==0.4.2
 typing_extensions==4.16.0
+uvicorn==0.52.1
+uvloop==0.22.1
+watchfiles==1.2.0
+websockets==17.0.1

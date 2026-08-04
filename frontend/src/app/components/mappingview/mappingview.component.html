@@ -1,0 +1,78 @@
+<div class="flex max-w-2xl flex-col gap-5">
+  <h3 class="text-base font-semibold text-slate-900">Review column mapping</h3>
+
+  <section *ngIf="alreadyMappedEntries.length" class="flex flex-col gap-2">
+    <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+      Automatically mapped
+    </h4>
+    <ul class="flex flex-col gap-1">
+      <li
+        *ngFor="let entry of alreadyMappedEntries"
+        class="flex items-center gap-2 text-sm text-slate-700"
+      >
+        <span>{{ entry[0] }}</span>
+        <span class="text-slate-400">&#8594;</span>
+        <span class="font-semibold text-slate-900">{{ entry[1] }}</span>
+      </li>
+    </ul>
+  </section>
+
+  <section *ngIf="hasReviewItems" class="flex flex-col gap-2">
+    <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+      Needs your confirmation
+    </h4>
+    <table class="w-full border-collapse text-sm">
+      <thead>
+      <tr>
+        <th class="border-b border-slate-200 px-3 py-2 text-left font-medium text-slate-500">
+          Source column
+        </th>
+        <th class="border-b border-slate-200 px-3 py-2 text-left font-medium text-slate-500">
+          Target field
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let row of rows">
+        <td class="border-b border-slate-100 px-3 py-2 text-slate-800">
+          {{ row.source_column }}
+        </td>
+        <td class="border-b border-slate-100 px-3 py-2">
+          <select
+            class="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            [(ngModel)]="row.target_field"
+            [name]="row.source_column"
+          >
+            <option [ngValue]="null">— Skip this column —</option>
+            <option *ngFor="let suggestion of row.suggestions" [ngValue]="suggestion">
+              {{ suggestion }} (suggested)
+            </option>
+            <option
+              *ngFor="let field of schemaFields"
+              [ngValue]="field"
+              [hidden]="row.suggestions.includes(field)"
+            >
+              {{ field }}
+            </option>
+          </select>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <p *ngIf="!hasReviewItems" class="text-sm text-emerald-600">
+    Everything mapped automatically — nothing left to confirm.
+  </p>
+
+  <p class="text-sm text-rose-600" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <button
+    type="button"
+    class="self-start rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-emerald-300"
+    [disabled]="isSubmitting"
+    (click)="submit()"
+  >
+    {{ isSubmitting ? 'Loading into database…' : 'Confirm & load data' }}
+  </button>
+</div>

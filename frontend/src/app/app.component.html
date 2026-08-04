@@ -1,0 +1,29 @@
+<div class="min-h-screen bg-slate-50">
+  <nav class="border-b border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
+      <a routerLink="/pipeline" class="flex items-center gap-2">
+        <span class="flex h-7 w-7 items-center justify-center rounded-md bg-indigo-600 text-sm font-bold text-white">
+          B
+        </span>
+        <span class="text-sm font-semibold text-slate-900">bayan.com.tn</span>
+      </a>
+
+      <ul class="flex items-center gap-1 text-sm font-medium text-slate-600">
+        <li>
+          <a
+            routerLink="/pipeline"
+            routerLinkActive="bg-indigo-50 text-indigo-600"
+            [routerLinkActiveOptions]="{ exact: false }"
+            class="rounded-md px-3 py-1.5 hover:bg-slate-100 hover:text-slate-900"
+          >
+            Pipeline
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="mx-auto max-w-5xl px-6 py-8">
+    <router-outlet></router-outlet>
+  </main>
+</div>
