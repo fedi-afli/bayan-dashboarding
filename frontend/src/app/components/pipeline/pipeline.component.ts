@@ -1,42 +1,36 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { FileuploadComponent } from '../fileupload/fileupload.component';
 import { MappingviewComponent } from '../mappingview/mappingview.component';
-import { PipelinedashboardComponent } from '../pipelinedashboard/pipelinedashboard.component';
-import { ChartSpec, ConfirmResponse, MappingResult, UploadResponse } from '../../models/models';
+import { DatasetOverview, ReviewResponse } from '../../models/models';
 
-type Stage = 'upload' | 'review' | 'charts';
-
+/** New dashboard flow: upload -> check columns -> dashboard page. */
 @Component({
   selector: 'app-pipeline',
   standalone: true,
-  imports: [CommonModule, FileuploadComponent, MappingviewComponent, PipelinedashboardComponent],
+  imports: [CommonModule, FileuploadComponent, MappingviewComponent],
   templateUrl: './pipeline.component.html',
 })
 export class PipelineComponent {
-  stage: Stage = 'upload';
+  review: ReviewResponse | null = null;
 
-  jobId: string | null = null;
-  mappingResult: MappingResult | null = null;
-  charts: ChartSpec[] = [];
+  constructor(private router: Router) {}
 
-  onUploaded(response: UploadResponse): void {
-    this.jobId = response.job_id;
-    this.mappingResult = response.result;
-    this.stage = 'review';
+  get step(): number {
+    return this.review ? 2 : 1;
   }
 
-  onConfirmed(response: ConfirmResponse): void {
-    this.mappingResult = response.result;
-    this.charts = response.charts;
-    this.stage = 'charts';
+  onUploaded(review: ReviewResponse): void {
+    this.review = review;
+  }
+
+  onConfirmed(overview: DatasetOverview): void {
+    this.router.navigate(['/dashboards', overview.id]);
   }
 
   startOver(): void {
-    this.stage = 'upload';
-    this.jobId = null;
-    this.mappingResult = null;
-    this.charts = [];
+    this.review = null;
   }
 }

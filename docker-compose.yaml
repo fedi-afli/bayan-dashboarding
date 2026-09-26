@@ -17,5 +17,23 @@ services:
       timeout: 5s
       retries: 5
 
+  # Identity provider (login, sign-up, sessions). Dev mode: realm imported from
+  # auth/realm-bayan.dev.json on first start; data kept in the bayan_auth_data volume.
+  bayan_auth:
+    image: quay.io/keycloak/keycloak:26.3
+    container_name: bayan_auth
+    restart: unless-stopped
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_HTTP_PORT: "8080"
+    ports:
+      - "8080:8080"
+    volumes:
+      - bayan_auth_data:/opt/keycloak/data
+      - ./auth/realm-bayan.dev.json:/opt/keycloak/data/import/realm-bayan.json:ro
+
 volumes:
   bayan_db_data:
+  bayan_auth_data:

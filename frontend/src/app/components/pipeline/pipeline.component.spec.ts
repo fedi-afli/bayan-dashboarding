@@ -1,23 +1,23 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 import { PipelineComponent } from './pipeline.component';
 
 describe('PipelineComponent', () => {
-  let component: PipelineComponent;
   let fixture: ComponentFixture<PipelineComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PipelineComponent]
-    })
-    .compileComponents();
-    
+      imports: [PipelineComponent],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+    }).compileComponents();
     fixture = TestBed.createComponent(PipelineComponent);
-    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

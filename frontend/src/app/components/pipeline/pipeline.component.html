@@ -1,41 +1,25 @@
-<div class="flex max-w-3xl flex-col gap-6">
-  <ol class="flex gap-6 text-sm text-slate-400">
-    <li
-      [ngClass]="{
-        'font-bold text-indigo-600': stage === 'upload',
-        'text-emerald-600': stage !== 'upload'
-      }"
-    >
-      1. Upload
-    </li>
-    <li
-      [ngClass]="{
-        'font-bold text-indigo-600': stage === 'review',
-        'text-emerald-600': stage === 'charts'
-      }"
-    >
-      2. Review mapping
-    </li>
-    <li [ngClass]="{ 'font-bold text-indigo-600': stage === 'charts' }">3. Charts</li>
+<div class="mx-auto flex w-full max-w-4xl flex-col gap-8">
+  <ol class="flex items-center justify-center gap-3 text-sm">
+    <ng-container *ngFor="let s of ['Upload', 'Check columns', 'Dashboard']; let i = index; let last = last">
+      <li class="flex items-center gap-2">
+        <span
+          class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold"
+          [ngClass]="i + 1 < step ? 'bg-emerald-500 text-white' : i + 1 === step ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-500'"
+        >
+          {{ i + 1 < step ? '✓' : i + 1 }}
+        </span>
+        <span [ngClass]="i + 1 === step ? 'font-medium text-slate-900' : 'text-slate-400'">{{ s }}</span>
+      </li>
+      <li *ngIf="!last" class="h-px w-10 bg-slate-200"></li>
+    </ng-container>
   </ol>
 
-  <app-fileupload *ngIf="stage === 'upload'" (uploaded)="onUploaded($event)"></app-fileupload>
+  <app-fileupload *ngIf="!review" (uploaded)="onUploaded($event)"></app-fileupload>
 
   <app-mappingview
-    *ngIf="stage === 'review' && jobId && mappingResult"
-    [jobId]="jobId"
-    [mappingResult]="mappingResult"
+    *ngIf="review"
+    [review]="review"
     (confirmed)="onConfirmed($event)"
+    (cancelled)="startOver()"
   ></app-mappingview>
-
-  <ng-container *ngIf="stage === 'charts' && jobId">
-    <app-pipelinedashboard [jobId]="jobId" [charts]="charts"></app-pipelinedashboard>
-    <button
-      type="button"
-      class="self-start rounded-lg border border-slate-300 bg-white px-4 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
-      (click)="startOver()"
-    >
-      Load another file
-    </button>
-  </ng-container>
 </div>

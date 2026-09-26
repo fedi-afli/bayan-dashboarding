@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import {
   ChartDataResponse,
-  ChartSpec,
-  ConfirmResponse,
-  FieldConfirmation,
-  UploadResponse,
+  DatasetOverview,
+  DatasetSummary,
+  DateRange,
+  Quote,
+  ReviewResponse,
 } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
@@ -17,34 +18,60 @@ export class PipelineService {
 
   constructor(private http: HttpClient) {}
 
-  uploadFile(file: File): Observable<UploadResponse> {
+  uploadFile(file: File): Observable<ReviewResponse> {
     const formData = new FormData();
     formData.append('file', file, file.name);
-    return this.http.post<UploadResponse>(`${this.baseUrl}/pipeline/upload`, formData);
+    return this.http.post<ReviewResponse>(`${this.baseUrl}/datasets/upload`, formData);
   }
 
-  confirmMapping(jobId: string, confirmations: FieldConfirmation[]): Observable<ConfirmResponse> {
-    return this.http.post<ConfirmResponse>(
-      `${this.baseUrl}/pipeline/${jobId}/confirm`,
-      confirmations
-    );
+  getReview(datasetId: string): Observable<ReviewResponse> {
+    return this.http.get<ReviewResponse>(`${this.baseUrl}/datasets/${datasetId}/review`);
   }
 
-  getSchemaFields(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/schema/fields`);
+  /** mapping: every file column -> schema field, or null to leave it out */
+  confirmMapping(datasetId: string, mapping: Record<string, string | null>): Observable<DatasetOverview> {
+    return this.http.post<DatasetOverview>(`${this.baseUrl}/datasets/${datasetId}/confirm`, { mapping });
   }
 
-  // --- Added: needed once a job is confirmed, to (re)fetch resolved charts
-  // and pull the row data for each one. Mirrors GET /pipeline/{id}/charts
-  // and GET /pipeline/{id}/charts/{chart_name}/data.
-
-  getCharts(jobId: string): Observable<ChartSpec[]> {
-    return this.http.get<ChartSpec[]>(`${this.baseUrl}/pipeline/${jobId}/charts`);
+  /** Price of building with this mapping (the server computes it from the resources needed). */
+  quote(datasetId: string, mapping: Record<string, string | null>): Observable<Quote> {
+    return this.http.post<Quote>(`${this.baseUrl}/datasets/${datasetId}/quote`, { mapping });
   }
 
-  getChartData(jobId: string, chartName: string): Observable<ChartDataResponse> {
+  listDatasets(): Observable<DatasetSummary[]> {
+    return this.http.get<DatasetSummary[]>(`${this.baseUrl}/datasets`);
+  }
+
+  getDataset(datasetId: string): Observable<DatasetOverview> {
+    return this.http.get<DatasetOverview>(`${this.baseUrl}/datasets/${datasetId}`);
+  }
+
+  saveLayout(datasetId: string, hiddenCharts: string[]): Observable<{ hidden_charts: string[] }> {
+    return this.http.put<{ hidden_charts: string[] }>(`${this.baseUrl}/datasets/${datasetId}/layout`, {
+      hidden_charts: hiddenCharts,
+    });
+  }
+
+  deleteDataset(datasetId: string): Observable<unknown> {
+    return this.http.delete(`${this.baseUrl}/datasets/${datasetId}`);
+  }
+
+  getChartData(datasetId: string, chartName: string, range?: DateRange): Observable<ChartDataResponse> {
+    let params = new HttpParams();
+    if (range?.from) params = params.set('date_from', range.from);
+    if (range?.to) params = params.set('date_to', range.to);
     return this.http.get<ChartDataResponse>(
-      `${this.baseUrl}/pipeline/${jobId}/charts/${encodeURIComponent(chartName)}/data`
+      `${this.baseUrl}/datasets/${datasetId}/charts/${encodeURIComponent(chartName)}/data`,
+      { params }
     );
   }
+}
+
+/** Human-readable message out of any API error shape. */
+export function apiErrorMessage(err: HttpErrorResponse, fallback: string): string {
+  const detail = err.error?.detail;
+  if (typeof detail === 'string') return detail;
+  if (detail?.errors?.length) return detail.errors.join(' ');
+  if (err.status === 0) return 'Can’t reach the server. Is the API running?';
+  return fallback;
 }

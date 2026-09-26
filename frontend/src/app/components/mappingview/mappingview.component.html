@@ -1,78 +1,156 @@
-<div class="flex max-w-2xl flex-col gap-5">
-  <h3 class="text-base font-semibold text-slate-900">Review column mapping</h3>
+<div class="mx-auto w-full max-w-4xl">
+  <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-xl font-semibold tracking-tight text-slate-900">
+        {{ mode === 'edit' ? 'Edit column matching' : 'Check how we read your file' }}
+      </h1>
+      <p class="mt-1 text-sm text-slate-500">
+        <span class="font-medium text-slate-700">{{ review.filename }}</span> · {{ review.row_count | number }} rows ·
+        {{ matchedCount }} of {{ rows.length }} columns used
+      </p>
+    </div>
+    <label *ngIf="rows.length > 6" class="flex cursor-pointer items-center gap-2 text-sm text-slate-600">
+      <input type="checkbox" [(ngModel)]="onlyAttention" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+      Only show columns to check
+    </label>
+  </div>
 
-  <section *ngIf="alreadyMappedEntries.length" class="flex flex-col gap-2">
-    <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">
-      Automatically mapped
-    </h4>
-    <ul class="flex flex-col gap-1">
-      <li
-        *ngFor="let entry of alreadyMappedEntries"
-        class="flex items-center gap-2 text-sm text-slate-700"
+  <div *ngIf="attentionCount" class="mb-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+    <svg class="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm-.75 4.5h1.5v5h-1.5v-5zm0 6.5h1.5v1.5h-1.5V13z" /></svg>
+    <span>
+      <b>{{ attentionCount }} column{{ attentionCount > 1 ? 's' : '' }}</b> {{ attentionCount > 1 ? 'were' : 'was' }} matched by AI — take a quick look at the sample values and
+      correct them if needed.
+    </span>
+  </div>
+
+  <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+    <div class="hidden grid-cols-[1fr_1fr_110px] gap-4 border-b border-slate-100 bg-slate-50/60 px-5 py-2.5 text-xs font-medium uppercase tracking-wide text-slate-400 sm:grid">
+      <span>Column in your file</span>
+      <span>Used as</span>
+      <span class="text-right">Status</span>
+    </div>
+
+    <div
+      *ngFor="let row of shownRows"
+      class="grid grid-cols-1 gap-2 border-b border-slate-100 px-5 py-3 last:border-0 sm:grid-cols-[1fr_1fr_110px] sm:items-center sm:gap-4"
+      [class.bg-amber-50]="row.status === 'check'"
+    >
+      <div class="min-w-0">
+        <p class="truncate text-sm font-medium text-slate-800" dir="auto">{{ row.column.name }}</p>
+        <p class="truncate text-xs text-slate-400" dir="auto" [title]="row.examples">{{ row.examples || 'no values' }}</p>
+      </div>
+
+      <div>
+        <select
+          class="w-full rounded-lg border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2"
+          [ngClass]="duplicateOf(row).length
+            ? 'border-rose-400 focus:ring-rose-200'
+            : 'border-slate-200 focus:border-indigo-500 focus:ring-indigo-100'"
+          [class.text-slate-400]="!row.target"
+          [(ngModel)]="row.target"
+          (ngModelChange)="onChange(row)"
+          [name]="row.column.name"
+        >
+          <option [ngValue]="null">Don’t use this column</option>
+          <option *ngFor="let f of fields" [ngValue]="f.name">{{ f.label }}</option>
+        </select>
+        <p *ngIf="duplicateOf(row).length" class="mt-1 text-xs text-rose-600">
+          Also picked for “{{ duplicateOf(row).join('”, “') }}” — choose only one.
+        </p>
+      </div>
+
+      <div class="sm:text-right">
+        <span
+          class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+          [ngClass]="{
+            'bg-emerald-50 text-emerald-700': row.status === 'matched',
+            'bg-amber-100 text-amber-800': row.status === 'check',
+            'bg-slate-100 text-slate-500': row.status === 'unmatched' || row.status === 'empty'
+          }"
+        >
+          {{ statusLabel(row.status) }}
+        </span>
+      </div>
+    </div>
+
+    <p *ngIf="!shownRows.length" class="px-5 py-8 text-center text-sm text-slate-500">Nothing left to check 🎉</p>
+  </div>
+
+  <ul *ngIf="review.result.notes.length" class="mt-3 space-y-1 text-xs text-slate-500">
+    <li *ngFor="let n of review.result.notes">{{ n }}</li>
+  </ul>
+
+  <p *ngIf="errorMessage" class="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{{ errorMessage }}</p>
+
+  <!-- price: computed by the server from the data this dashboard needs -->
+  <section *ngIf="quote as q" class="mt-6 rounded-2xl border border-slate-200/80 bg-white px-5 py-4 shadow-sm" [class.opacity-60]="quoting">
+    <div class="flex items-start justify-between gap-4">
+      <div class="min-w-0">
+        <p class="text-sm font-semibold text-slate-900">
+          <ng-container *ngIf="q.paid === 0">Building this dashboard costs {{ plural(q.credits) }}</ng-container>
+          <ng-container *ngIf="q.paid > 0 && q.due === 0">No extra credits needed — already covered</ng-container>
+          <ng-container *ngIf="q.paid > 0 && q.due > 0">This version needs {{ plural(q.due) }} more</ng-container>
+        </p>
+        <p class="mt-0.5 text-xs text-slate-500">
+          Based on how much data it processes and stores<span *ngIf="q.drivers.ai_columns"> and the AI matching</span>
+          · you have {{ plural(q.balance) }}
+          <button type="button" class="ml-1 font-medium text-indigo-600 hover:underline" (click)="showBreakdown = !showBreakdown">
+            {{ showBreakdown ? 'Hide details' : 'How is this calculated?' }}
+          </button>
+        </p>
+      </div>
+      <p class="shrink-0 text-right">
+        <span class="text-2xl font-semibold tabular-nums text-slate-900">{{ q.paid > 0 ? q.due : q.credits }}</span>
+        <span class="block text-xs text-slate-400">credit{{ (q.paid > 0 ? q.due : q.credits) === 1 ? '' : 's' }}</span>
+      </p>
+    </div>
+
+    <div *ngIf="showBreakdown" class="mt-4 border-t border-slate-100 pt-3 text-sm">
+      <div *ngFor="let line of q.lines" class="flex items-baseline justify-between gap-4 py-1">
+        <span class="min-w-0">
+          <span class="text-slate-700">{{ line.label }}</span>
+          <span class="ml-2 text-xs text-slate-400">{{ line.detail }}</span>
+        </span>
+        <span class="shrink-0 tabular-nums text-slate-600">{{ line.amount | number: '1.2-2' }}</span>
+      </div>
+      <div class="mt-1 flex justify-between border-t border-slate-100 pt-2 text-xs text-slate-500">
+        <span>Total {{ q.exact | number: '1.2-2' }}, rounded up to whole credits</span>
+        <span class="font-semibold tabular-nums text-slate-700">{{ plural(q.credits) }}</span>
+      </div>
+      <p *ngIf="q.paid > 0" class="mt-1 text-xs text-slate-500">
+        Already paid for this dashboard: {{ plural(q.paid) }} · due now: {{ plural(q.due) }}. Using fewer columns never costs more.
+      </p>
+    </div>
+  </section>
+
+  <div class="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <p class="text-sm">
+      <span *ngIf="!canAfford" class="text-rose-600">
+        You need {{ plural(due) }} and have {{ plural(quote?.balance ?? 0) }}.
+      </span>
+    </p>
+
+    <div class="flex items-center justify-end gap-3">
+      <button type="button" class="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100" (click)="cancelled.emit()">
+        Cancel
+      </button>
+      <a
+        *ngIf="!canAfford"
+        routerLink="/credits"
+        class="rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-amber-400"
       >
-        <span>{{ entry[0] }}</span>
-        <span class="text-slate-400">&#8594;</span>
-        <span class="font-semibold text-slate-900">{{ entry[1] }}</span>
-      </li>
-    </ul>
-  </section>
-
-  <section *ngIf="hasReviewItems" class="flex flex-col gap-2">
-    <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">
-      Needs your confirmation
-    </h4>
-    <table class="w-full border-collapse text-sm">
-      <thead>
-      <tr>
-        <th class="border-b border-slate-200 px-3 py-2 text-left font-medium text-slate-500">
-          Source column
-        </th>
-        <th class="border-b border-slate-200 px-3 py-2 text-left font-medium text-slate-500">
-          Target field
-        </th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let row of rows">
-        <td class="border-b border-slate-100 px-3 py-2 text-slate-800">
-          {{ row.source_column }}
-        </td>
-        <td class="border-b border-slate-100 px-3 py-2">
-          <select
-            class="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            [(ngModel)]="row.target_field"
-            [name]="row.source_column"
-          >
-            <option [ngValue]="null">— Skip this column —</option>
-            <option *ngFor="let suggestion of row.suggestions" [ngValue]="suggestion">
-              {{ suggestion }} (suggested)
-            </option>
-            <option
-              *ngFor="let field of schemaFields"
-              [ngValue]="field"
-              [hidden]="row.suggestions.includes(field)"
-            >
-              {{ field }}
-            </option>
-          </select>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </section>
-
-  <p *ngIf="!hasReviewItems" class="text-sm text-emerald-600">
-    Everything mapped automatically — nothing left to confirm.
-  </p>
-
-  <p class="text-sm text-rose-600" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-  <button
-    type="button"
-    class="self-start rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-emerald-300"
-    [disabled]="isSubmitting"
-    (click)="submit()"
-  >
-    {{ isSubmitting ? 'Loading into database…' : 'Confirm & load data' }}
-  </button>
+        Top up credits
+      </a>
+      <button
+        *ngIf="canAfford"
+        type="button"
+        class="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-indigo-300"
+        [disabled]="!canSubmit"
+        (click)="submit()"
+      >
+        {{ buildLabel }}
+      </button>
+    </div>
+  </div>
+  <p *ngIf="!canAfford" class="mt-2 text-right text-xs text-slate-400">Your file is saved as a draft in your dashboards — build it once you’ve topped up.</p>
 </div>

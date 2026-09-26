@@ -1,0 +1,196 @@
+<p *ngIf="loadError" class="rounded-xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700">
+  {{ loadError }} <a routerLink="/dashboards" class="font-medium underline">Back to dashboards</a>
+</p>
+
+<div *ngIf="!dataset && !loadError" class="space-y-4">
+  <div class="h-8 w-64 animate-pulse rounded bg-slate-200/70"></div>
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div *ngFor="let i of [1, 2, 3, 4]" class="h-24 animate-pulse rounded-2xl bg-slate-200/50"></div>
+  </div>
+</div>
+
+<ng-container *ngIf="dataset as ds">
+  <!-- Header -->
+  <header class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div class="min-w-0">
+      <a routerLink="/dashboards" class="text-xs font-medium text-slate-400 hover:text-indigo-600">&larr; All dashboards</a>
+      <h1 class="mt-1 truncate text-2xl font-semibold tracking-tight text-slate-900">{{ ds.filename }}</h1>
+      <p class="mt-1 text-sm text-slate-500">
+        {{ ds.row_count | number }} rows<span *ngIf="rangeLabel"> · {{ rangeLabel }}</span><span *ngIf="ds.credits_used"> · {{ ds.credits_used }} credit{{ ds.credits_used === 1 ? '' : 's' }}</span>
+      </p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2">
+      <!-- date presets -->
+      <div *ngIf="ds.date_field" class="flex max-w-full items-center overflow-x-auto rounded-lg border border-slate-200 bg-white p-0.5 text-sm shadow-sm">
+        <button
+          *ngFor="let p of presets"
+          type="button"
+          class="whitespace-nowrap rounded-md px-2.5 py-1.5 font-medium transition-colors sm:px-3"
+          [ngClass]="activePreset === p.id ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'"
+          (click)="applyPreset(p)"
+        >
+          {{ p.label }}
+        </button>
+        <button
+          type="button"
+          class="whitespace-nowrap rounded-md px-2.5 py-1.5 font-medium transition-colors sm:px-3"
+          [ngClass]="activePreset === 'custom' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'"
+          (click)="activePreset = 'custom'"
+        >
+          Custom
+        </button>
+      </div>
+
+      <button
+        type="button"
+        class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+        (click)="customizeOpen = true"
+      >
+        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M4 6h8M16 6h0M4 14h2M10 14h6M14 4v4M8 12v4" />
+        </svg>
+        Customize
+        <span *ngIf="hiddenCount" class="rounded-full bg-slate-100 px-1.5 text-xs text-slate-500">+{{ hiddenCount }}</span>
+      </button>
+
+      <div class="relative">
+        <button
+          type="button"
+          class="rounded-lg border border-slate-200 bg-white p-2 text-slate-500 shadow-sm hover:bg-slate-50"
+          title="More"
+          (click)="menuOpen = !menuOpen"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><circle cx="4" cy="10" r="1.6" /><circle cx="10" cy="10" r="1.6" /><circle cx="16" cy="10" r="1.6" /></svg>
+        </button>
+        <div
+          *ngIf="menuOpen"
+          class="absolute right-0 z-30 mt-2 w-52 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 text-sm shadow-lg"
+        >
+          <a [routerLink]="['/dashboards', ds.id, 'mapping']" class="block px-4 py-2 text-slate-700 hover:bg-slate-50">Edit column matching</a>
+          <a routerLink="/upload" class="block px-4 py-2 text-slate-700 hover:bg-slate-50">Upload a new file</a>
+          <button type="button" class="block w-full px-4 py-2 text-left text-rose-600 hover:bg-rose-50" (click)="confirmDelete = true; menuOpen = false">
+            Delete dashboard…
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- custom date inputs, only while "Custom" is picked -->
+  <div *ngIf="ds.date_field && activePreset === 'custom'" class="-mt-3 mb-6 flex flex-wrap items-center justify-end gap-2 text-sm text-slate-500">
+    <span>From</span>
+    <input #from type="date" [min]="ds.date_min" [max]="ds.date_max" [value]="range.from ?? ds.date_min"
+           (change)="onCustomRange(from.value, to.value)"
+           class="rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-700 focus:border-indigo-500 focus:outline-none" />
+    <span>to</span>
+    <input #to type="date" [min]="ds.date_min" [max]="ds.date_max" [value]="range.to ?? ds.date_max"
+           (change)="onCustomRange(from.value, to.value)"
+           class="rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-700 focus:border-indigo-500 focus:outline-none" />
+  </div>
+
+  <!-- KPIs -->
+  <section
+    *ngIf="kpis.length"
+    class="mb-5 grid grid-cols-2 gap-4 md:grid-cols-3"
+    [ngClass]="kpis.length > 4 ? 'xl:grid-cols-5' : 'xl:grid-cols-4'"
+  >
+    <app-kpi-tile
+      *ngFor="let k of kpis; trackBy: trackByName"
+      [datasetId]="ds.id"
+      [spec]="k"
+      [range]="range"
+      (hide)="hideChart(k)"
+    ></app-kpi-tile>
+  </section>
+
+  <!-- Trend(s): full width -->
+  <section class="mb-5 space-y-5">
+    <app-chart-card
+      *ngFor="let c of trends; trackBy: trackByName"
+      [datasetId]="ds.id"
+      [spec]="c"
+      [range]="range"
+      (hide)="hideChart(c)"
+    ></app-chart-card>
+  </section>
+
+  <!-- Breakdowns -->
+  <section class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+    <app-chart-card
+      *ngFor="let c of panels; trackBy: trackByName"
+      [datasetId]="ds.id"
+      [spec]="c"
+      [range]="range"
+      (hide)="hideChart(c)"
+    ></app-chart-card>
+  </section>
+
+  <p *ngIf="!kpis.length && !trends.length && !panels.length" class="rounded-2xl border border-dashed border-slate-300 py-16 text-center text-sm text-slate-500">
+    All charts are hidden.
+    <button type="button" class="font-medium text-indigo-600 hover:underline" (click)="customizeOpen = true">Choose charts to show</button>
+  </p>
+
+  <button
+    *ngIf="hiddenCount"
+    type="button"
+    class="mt-6 w-full rounded-2xl border border-dashed border-slate-300 py-4 text-sm font-medium text-slate-500 hover:border-indigo-300 hover:text-indigo-600"
+    (click)="customizeOpen = true"
+  >
+    {{ hiddenCount }} more chart{{ hiddenCount > 1 ? 's' : '' }} available — customize
+  </button>
+
+  <!-- Customize drawer -->
+  <div *ngIf="customizeOpen" class="fixed inset-0 z-50 flex justify-end">
+    <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-[1px]" (click)="customizeOpen = false"></div>
+    <aside class="relative flex h-full w-full max-w-sm flex-col bg-white shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+        <div>
+          <h2 class="text-base font-semibold text-slate-900">Customize dashboard</h2>
+          <p class="text-xs text-slate-500">Pick what shows. Saved automatically.</p>
+        </div>
+        <button type="button" class="rounded-md p-1.5 text-slate-400 hover:bg-slate-100" (click)="customizeOpen = false" title="Close">
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15" /></svg>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto px-5 py-4">
+        <ng-container *ngFor="let g of groups">
+          <div *ngIf="chartsIn(g.types).length" class="mb-5">
+            <h3 class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{{ g.title }}</h3>
+            <label
+              *ngFor="let c of chartsIn(g.types)"
+              class="flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 text-sm hover:bg-slate-50"
+            >
+              <span [class.text-slate-400]="!isVisible(c)" class="text-slate-700">{{ c.title }}</span>
+              <span class="relative inline-flex h-5 w-9 shrink-0 items-center">
+                <input type="checkbox" class="peer sr-only" [checked]="isVisible(c)" (change)="toggle(c)" />
+                <span class="absolute inset-0 rounded-full bg-slate-200 transition-colors peer-checked:bg-indigo-600"></span>
+                <span class="absolute left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4"></span>
+              </span>
+            </label>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="border-t border-slate-100 px-5 py-3">
+        <button type="button" class="text-sm font-medium text-slate-500 hover:text-indigo-600" (click)="resetLayout()">
+          Reset to recommended
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Delete confirmation -->
+  <div *ngIf="confirmDelete" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/30" (click)="confirmDelete = false"></div>
+    <div class="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+      <h2 class="text-base font-semibold text-slate-900">Delete this dashboard?</h2>
+      <p class="mt-2 text-sm text-slate-500">“{{ ds.filename }}” and its loaded data will be removed. This can’t be undone.</p>
+      <div class="mt-6 flex justify-end gap-2">
+        <button type="button" class="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100" (click)="confirmDelete = false">Cancel</button>
+        <button type="button" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700" (click)="deleteDashboard()">Delete</button>
+      </div>
+    </div>
+  </div>
+</ng-container>

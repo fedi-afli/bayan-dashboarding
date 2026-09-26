@@ -23,12 +23,15 @@ include/
 *.feather
 *.h5
 *.hdf5
-*.json
 *.sqlite
 *.sqlite3
 *.db
 local_data/
 data/
+# uploaded customer files, generated scripts, runtime-learned synonyms
+data_pipeline/uploads/
+data_pipeline/output/
+data_pipeline/engine/matchers/learned_synonyms.json
 datasets/
 raw_data/
 processed_data/

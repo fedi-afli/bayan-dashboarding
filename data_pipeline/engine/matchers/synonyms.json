@@ -1,0 +1,426 @@
+{
+    "FIELD_SYNONYMS": {
+        "product_name": [
+            "article",
+            "product",
+            "item",
+            "produit",
+            "designation",
+            "libelle",
+            "art",
+            "nom produit",
+            "المنتج",
+            "منتج",
+            "اسم المنتج",
+            "السلعة",
+            "البضاعة",
+            "المادة"
+        ],
+        "quantity": [
+            "qte",
+            "qty",
+            "quantite",
+            "count",
+            "nombre",
+            "qte_vendue",
+            "units",
+            "unites",
+            "quantityordered",
+            "الكمية",
+            "كمية",
+            "العدد"
+        ],
+        "revenue": [
+            "montant",
+            "montant ht",
+            "montant total",
+            "total",
+            "amount",
+            "prix total",
+            "chiffre affaire",
+            "ca",
+            "mt_ht",
+            "total revenue",
+            "sales amount",
+            "sales",
+            "montant ttc",
+            "total ttc",
+            "total ht",
+            "montant net",
+            "net a payer",
+            "ventes",
+            "المبلغ",
+            "المبلغ الجملي",
+            "المجموع",
+            "رقم المعاملات",
+            "المداخيل",
+            "قيمة المبيعات",
+            "الثمن الجملي"
+        ],
+        "sale_date": [
+            "date",
+            "date vente",
+            "date de vente",
+            "transaction date",
+            "dt",
+            "date achat",
+            "date facture",
+            "date operation",
+            "jour",
+            "التاريخ",
+            "تاريخ البيع",
+            "تاريخ"
+        ],
+        "unit_price": [
+            "prix unitaire",
+            "pu",
+            "price per unit",
+            "unit cost",
+            "prix",
+            "cout unitaire",
+            "priceeach",
+            "price each",
+            "prix de vente",
+            "prix vente",
+            "pv unitaire",
+            "السعر",
+            "سعر الوحدة",
+            "الثمن",
+            "ثمن الوحدة"
+        ],
+        "customer_name": [
+            "client",
+            "nom client",
+            "customer",
+            "buyer",
+            "acheteur",
+            "nom du client",
+            "customername",
+            "customer name",
+            "الحريف",
+            "حريف",
+            "العميل",
+            "الزبون",
+            "اسم الحريف",
+            "اسم العميل"
+        ],
+        "customer_id": [
+            "id client",
+            "customer id",
+            "ref client",
+            "client id",
+            "numero client",
+            "cust_id",
+            "customerid"
+        ],
+        "category": [
+            "categorie",
+            "cat",
+            "product category",
+            "type produit",
+            "famille",
+            "productline",
+            "product line",
+            "famille article",
+            "rayon",
+            "الصنف",
+            "الفئة",
+            "النوع",
+            "العائلة"
+        ],
+        "discount": [
+            "remise",
+            "reduction",
+            "discount pct",
+            "rabais",
+            "remise pct",
+            "taux remise",
+            "pourcentage remise",
+            "التخفيض",
+            "الخصم"
+        ],
+        "tax_amount": [
+            "tva",
+            "taxe",
+            "vat",
+            "tax",
+            "montant tva",
+            "الأداءات",
+            "الضريبة"
+        ],
+        "payment_method": [
+            "mode paiement",
+            "payment type",
+            "moyen de paiement",
+            "paiement",
+            "طريقة الدفع",
+            "وسيلة الدفع"
+        ],
+        "store_location": [
+            "magasin",
+            "store",
+            "location",
+            "point de vente",
+            "boutique",
+            "succursale",
+            "المحل",
+            "الفرع",
+            "نقطة البيع"
+        ],
+        "salesperson": [
+            "vendeur",
+            "sales rep",
+            "commercial",
+            "employe",
+            "agent",
+            "البائع",
+            "بائع",
+            "المندوب"
+        ],
+        "invoice_number": [
+            "facture",
+            "invoice",
+            "numero facture",
+            "num facture",
+            "ref facture",
+            "ordernumber",
+            "order number",
+            "order id",
+            "orderid",
+            "n facture",
+            "no facture",
+            "numero commande",
+            "num commande",
+            "bon de commande",
+            "رقم الفاتورة",
+            "الفاتورة",
+            "رقم الطلب"
+        ],
+        "currency": [
+            "devise",
+            "monnaie",
+            "curr"
+        ],
+        "order_status": [
+            "status",
+            "statut",
+            "order status",
+            "etat commande",
+            "etat",
+            "الحالة",
+            "حالة الطلب"
+        ],
+        "order_date": [
+            "date de commande",
+            "order date",
+            "orderdate",
+            "date commande",
+            "تاريخ الطلب",
+            "تاريخ الطلبية"
+        ],
+        "order_line_number": [
+            "orderlinenumber",
+            "order line number",
+            "line number",
+            "ligne commande",
+            "numero ligne",
+            "line no"
+        ],
+        "product_code": [
+            "productcode",
+            "product code",
+            "code produit",
+            "ref produit",
+            "sku",
+            "reference produit",
+            "code article",
+            "ref article",
+            "reference article"
+        ],
+        "msrp": [
+            "msrp",
+            "manufacturer suggested retail price",
+            "prix conseille",
+            "prix catalogue"
+        ],
+        "deal_size": [
+            "dealsize",
+            "deal size",
+            "taille commande",
+            "order size"
+        ],
+        "sale_year": [
+            "year_id",
+            "year",
+            "annee",
+            "annee vente"
+        ],
+        "sale_quarter": [
+            "qtr_id",
+            "quarter",
+            "trimestre",
+            "qtr"
+        ],
+        "sale_month": [
+            "month_id",
+            "month",
+            "mois",
+            "mois vente"
+        ],
+        "phone": [
+            "phone",
+            "telephone",
+            "tel",
+            "numero telephone",
+            "num tel",
+            "phone number",
+            "الهاتف"
+        ],
+        "address_line1": [
+            "addressline1",
+            "address line 1",
+            "adresse",
+            "adresse 1",
+            "address 1"
+        ],
+        "address_line2": [
+            "addressline2",
+            "address line 2",
+            "adresse 2",
+            "address 2",
+            "complement adresse"
+        ],
+        "city": [
+            "city",
+            "ville",
+            "town",
+            "delegation",
+            "localite",
+            "المدينة",
+            "مدينة",
+            "المعتمدية"
+        ],
+        "state": [
+            "state",
+            "region",
+            "province",
+            "gouvernorat",
+            "governorate",
+            "wilaya",
+            "الولاية",
+            "ولاية"
+        ],
+        "postal_code": [
+            "postalcode",
+            "postal code",
+            "code postal",
+            "zip",
+            "zip code",
+            "zipcode"
+        ],
+        "country": [
+            "country",
+            "pays",
+            "البلد",
+            "الدولة"
+        ],
+        "territory": [
+            "territory",
+            "territoire",
+            "zone",
+            "secteur"
+        ],
+        "contact_first_name": [
+            "contactfirstname",
+            "contact first name",
+            "prenom contact",
+            "first name",
+            "prenom"
+        ],
+        "contact_last_name": [
+            "contactlastname",
+            "contact last name",
+            "nom contact",
+            "last name",
+            "nom"
+        ],
+        "returned": [
+            "returned",
+            "return",
+            "is returned",
+            "has return",
+            "retour",
+            "retourne",
+            "retourné",
+            "retournee",
+            "retour produit",
+            "produit retourne",
+            "returned status",
+            "return status",
+            "returned_flag",
+            "return flag"
+        ],
+        "nbr_returned": [
+            "nbr returned",
+            "number returned",
+            "returned quantity",
+            "quantity returned",
+            "qty returned",
+            "qte retour",
+            "qte retournee",
+            "quantite retour",
+            "quantite retournee",
+            "nombre retour",
+            "nombre retourne",
+            "units returned",
+            "returned units",
+            "return count",
+            "return_count"
+        ],
+        "customer_type": [
+            "customertype",
+            "customer type",
+            "type client",
+            "type de client",
+            "categorie client",
+            "segment client",
+            "client type"
+        ],
+        "shipping_cost": [
+            "shippingcost",
+            "shipping cost",
+            "delivery cost",
+            "frais livraison",
+            "frais de livraison",
+            "cout livraison",
+            "cout expedition",
+            "expedition",
+            "transport cost",
+            "delivery fee",
+            "shipping fee",
+            "مصاريف الشحن",
+            "معلوم النقل"
+        ],
+        "delivery_date": [
+            "deliverydate",
+            "delivery date",
+            "date livraison",
+            "date de livraison",
+            "date reception",
+            "date reception commande",
+            "received date",
+            "arrival date",
+            "date arrivee",
+            "تاريخ التسليم"
+        ],
+        "region_manager": [
+            "regionmanager",
+            "region manager",
+            "responsable region",
+            "manager region",
+            "chef region",
+            "regional manager",
+            "responsable regional"
+        ]
+    }
+}

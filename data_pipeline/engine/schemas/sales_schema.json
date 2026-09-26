@@ -1,0 +1,244 @@
+{
+  "fields": {
+    "product_name": {
+      "type": "string",
+      "required": true,
+      "importance": "core",
+      "label": "Product"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "importance": "core",
+      "label": "Quantity sold"
+    },
+    "revenue": {
+      "type": "float",
+      "required": false,
+      "importance": "core",
+      "label": "Sales amount"
+    },
+    "unit_price": {
+      "type": "float",
+      "required": false,
+      "importance": "core",
+      "label": "Unit price"
+    },
+    "sale_date": {
+      "type": "date",
+      "required": false,
+      "importance": "core",
+      "label": "Sale date"
+    },
+    "order_date": {
+      "type": "date",
+      "required": false,
+      "importance": "core",
+      "label": "Order date"
+    },
+    "category": {
+      "type": "string",
+      "required": false,
+      "importance": "core",
+      "label": "Category"
+    },
+    "customer_name": {
+      "type": "string",
+      "required": false,
+      "importance": "optional",
+      "label": "Customer"
+    },
+    "customer_id": {
+      "type": "string",
+      "required": false,
+      "importance": "optional",
+      "label": "Customer ID"
+    },
+    "discount": {
+      "type": "float",
+      "required": false,
+      "importance": "optional",
+      "label": "Discount"
+    },
+    "returned": {
+      "type": "boolean",
+      "required": false,
+      "importance": "optional",
+      "label": "Returned (yes/no)"
+    },
+    "customer_type": {
+      "type": "string",
+      "required": false,
+      "importance": "optional",
+      "label": "Customer type"
+    },
+    "shipping_cost": {
+      "type": "float",
+      "required": false,
+      "importance": "optional",
+      "label": "Shipping cost"
+    },
+    "delivery_date": {
+      "type": "date",
+      "required": false,
+      "importance": "optional",
+      "label": "Delivery date"
+    },
+    "region_manager": {
+      "type": "string",
+      "required": false,
+      "importance": "metadata",
+      "label": "Region manager"
+    },
+    "nbr_returned": {
+      "type": "integer",
+      "required": false,
+      "importance": "metadata",
+      "label": "Units returned"
+    },
+    "tax_amount": {
+      "type": "float",
+      "required": false,
+      "importance": "optional",
+      "label": "Tax amount"
+    },
+    "payment_method": {
+      "type": "string",
+      "required": false,
+      "importance": "optional",
+      "label": "Payment method"
+    },
+    "store_location": {
+      "type": "string",
+      "required": false,
+      "importance": "optional",
+      "label": "Store"
+    },
+    "salesperson": {
+      "type": "string",
+      "required": false,
+      "importance": "optional",
+      "label": "Salesperson"
+    },
+    "invoice_number": {
+      "type": "string",
+      "required": false,
+      "importance": "optional",
+      "label": "Order / invoice number"
+    },
+    "currency": {
+      "type": "string",
+      "required": false,
+      "importance": "optional",
+      "label": "Currency"
+    },
+    "order_status": {
+      "type": "string",
+      "required": false,
+      "importance": "optional",
+      "label": "Order status"
+    },
+    "msrp": {
+      "type": "float",
+      "required": false,
+      "importance": "optional",
+      "label": "List price (MSRP)"
+    },
+    "city": {
+      "type": "string",
+      "required": false,
+      "importance": "optional",
+      "label": "City"
+    },
+    "state": {
+      "type": "string",
+      "required": false,
+      "importance": "optional",
+      "label": "Region / governorate"
+    },
+    "country": {
+      "type": "string",
+      "required": false,
+      "importance": "optional",
+      "label": "Country"
+    },
+    "territory": {
+      "type": "string",
+      "required": false,
+      "importance": "optional",
+      "label": "Territory"
+    },
+    "order_line_number": {
+      "type": "integer",
+      "required": false,
+      "importance": "metadata",
+      "label": "Order line number"
+    },
+    "product_code": {
+      "type": "string",
+      "required": false,
+      "importance": "metadata",
+      "label": "Product code"
+    },
+    "deal_size": {
+      "type": "string",
+      "required": false,
+      "importance": "metadata",
+      "label": "Deal size"
+    },
+    "sale_year": {
+      "type": "integer",
+      "required": false,
+      "importance": "metadata",
+      "label": "Year"
+    },
+    "sale_quarter": {
+      "type": "integer",
+      "required": false,
+      "importance": "metadata",
+      "label": "Quarter"
+    },
+    "sale_month": {
+      "type": "integer",
+      "required": false,
+      "importance": "metadata",
+      "label": "Month"
+    },
+    "phone": {
+      "type": "string",
+      "required": false,
+      "importance": "metadata",
+      "label": "Phone"
+    },
+    "address_line1": {
+      "type": "string",
+      "required": false,
+      "importance": "metadata",
+      "label": "Address"
+    },
+    "address_line2": {
+      "type": "string",
+      "required": false,
+      "importance": "metadata",
+      "label": "Address (line 2)"
+    },
+    "postal_code": {
+      "type": "string",
+      "required": false,
+      "importance": "metadata",
+      "label": "Postal code"
+    },
+    "contact_first_name": {
+      "type": "string",
+      "required": false,
+      "importance": "metadata",
+      "label": "Contact first name"
+    },
+    "contact_last_name": {
+      "type": "string",
+      "required": false,
+      "importance": "metadata",
+      "label": "Contact last name"
+    }
+  }
+}

@@ -1,45 +1,51 @@
-<div class="flex max-w-lg flex-col gap-3">
-  <div
-    class="cursor-pointer rounded-xl border-2 border-dashed px-4 py-10 text-center transition-colors"
+<div class="mx-auto flex w-full max-w-xl flex-col gap-4">
+  <div class="text-center">
+    <h1 class="text-xl font-semibold tracking-tight text-slate-900">Upload your sales file</h1>
+    <p class="mt-1 text-sm text-slate-500">An export from your till, ERP or a spreadsheet — columns can be in English, French or Arabic.</p>
+  </div>
+
+  <label
+    for="fileInput"
+    class="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed bg-white px-6 py-12 text-center transition-colors"
     [ngClass]="
-      selectedFile
+      isDragging
         ? 'border-indigo-500 bg-indigo-50'
-        : 'border-slate-300 hover:border-slate-400 hover:bg-slate-50'
+        : selectedFile
+          ? 'border-indigo-300'
+          : 'border-slate-300 hover:border-slate-400'
     "
     (drop)="onDrop($event)"
     (dragover)="onDragOver($event)"
+    (dragleave)="isDragging = false"
   >
-    <input
-      type="file"
-      id="fileInput"
-      class="hidden"
-      (change)="onFileSelected($event)"
-      accept=".csv,.xlsx,.xls"
-    />
+    <input type="file" id="fileInput" class="hidden" (change)="onFileSelected($event)" [accept]="accept" />
 
-    <label for="fileInput" class="flex cursor-pointer flex-col gap-1">
-      <ng-container *ngIf="!selectedFile">
-        <span class="text-sm font-semibold text-slate-800">
-          Drop a file here or click to browse
-        </span>
-        <span class="text-xs text-slate-500">CSV or Excel files</span>
-      </ng-container>
+    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+      <svg class="h-6 w-6" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 13V3m0 0L6.5 6.5M10 3l3.5 3.5M4 13v2a2 2 0 002 2h8a2 2 0 002-2v-2" />
+      </svg>
+    </div>
 
-      <ng-container *ngIf="selectedFile">
-        <span class="text-sm font-semibold text-slate-800">{{ selectedFile.name }}</span>
-        <span class="text-xs text-slate-500">{{ (selectedFile.size / 1024).toFixed(1) }} KB</span>
-      </ng-container>
-    </label>
-  </div>
+    <ng-container *ngIf="!selectedFile">
+      <span class="text-sm font-semibold text-slate-800">Drop a file here or click to browse</span>
+      <span class="text-xs text-slate-500">CSV, Excel or JSON · up to 50 MB</span>
+    </ng-container>
 
-  <p class="text-sm text-rose-600" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <ng-container *ngIf="selectedFile">
+      <span class="text-sm font-semibold text-slate-800">{{ selectedFile.name }}</span>
+      <span class="text-xs text-slate-500">{{ (selectedFile.size / 1024).toFixed(1) }} KB · click to pick another</span>
+    </ng-container>
+  </label>
+
+  <p class="rounded-lg bg-rose-50 px-4 py-2.5 text-sm text-rose-700" *ngIf="errorMessage">{{ errorMessage }}</p>
 
   <button
     type="button"
-    class="self-start rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-300"
+    class="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-indigo-300"
     [disabled]="!selectedFile || isUploading"
     (click)="upload()"
   >
-    {{ isUploading ? 'Uploading…' : 'Upload & analyze' }}
+    {{ isUploading ? 'Reading your columns…' : 'Continue' }}
   </button>
+  <p *ngIf="slowHint" class="text-center text-xs text-slate-400">Some column names are unusual — our AI is having a closer look.</p>
 </div>
